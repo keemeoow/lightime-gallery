@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="A virtual exhibition of light, form and memory">
+  <title>Light and Time · 3D Gallery</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; color: #f4ebda; background: #181b1b; }
+    * { box-sizing: border-box; }
+    body { margin: 0; overflow: hidden; }
+    main { position: fixed; inset: 0; background: #292b29; display: grid; }
+    canvas { display: block; position: absolute; width: 100%; height: 100%; outline: none; }
+    #loading { position: relative; align-self: center; justify-self: center; padding: 1rem 1.5rem; text-align: center; background: #181b1b; border: 1px solid #827664; max-width: 90%; }
+    #loading[hidden] { display: none; }
+  </style>
+</head>
+<body>
+  <main aria-label="3D gallery">
+    <canvas id="unity-canvas" tabindex="0" aria-label="Gallery viewport"></canvas>
+    <p id="loading" role="status">Loading gallery · 0%</p>
+  </main>
+  <script>
+    const canvas = document.getElementById("unity-canvas");
+    const loading = document.getElementById("loading");
+    const build = "Build";
+    const config = {
+      dataUrl: build + "/33a0b1e713bcc5c3967397191a7692a1.data.unityweb",
+      frameworkUrl: build + "/7db71c56d2c66077f8494afa3a9646d7.framework.js.unityweb",
+      codeUrl: build + "/272a29ac94377afcb1fcf729dc903a4d.wasm.unityweb",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "DefaultCompany",
+      productName: "unity-validation",
+      productVersion: "1.0",
+      devicePixelRatio: Math.min(window.devicePixelRatio || 1, 1.5)
+    };
+    const loader = document.createElement("script");
+    function showError() { loading.textContent = "Could not load the gallery. Reload in a desktop browser."; }
+    loader.src = build + "/5bc1facc3832120a71cd90952f6c75af.loader.js";
+    loader.onerror = showError;
+    loader.onload = () => {
+      createUnityInstance(canvas, config, (progress) => {
+        loading.textContent = "Loading gallery · " + Math.round(progress * 100) + "%";
+      }).then(() => {
+        loading.hidden = true;
+      }).catch((error) => {
+        console.error(error);
+        showError();
+      });
+    };
+    document.body.appendChild(loader);
+  </script>
+</body>
+</html>
